@@ -1,5 +1,6 @@
 generator client {
     provider = "prisma-client-js"
+    // previewFeatures = ["driverAdapters"] // Not strictly needed for v7 but good practice if issues arise, though v7 handles it.
 }
 
 datasource db {
@@ -59,6 +60,9 @@ model User {
 
     userSecret        UserSecret?
     organizationUsers OrganizationUser[]
+
+    // Organizations owned by this user
+    ownedOrganizations Organization[] @relation("OrgOwner")
 }
 
 model UserSecret {
@@ -74,9 +78,15 @@ model Organization {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    users    OrganizationUser[]
-    projects Project[]
-    domains  Domain[]
+    ownerId String?
+    owner   User?   @relation("OrgOwner", fields: [ownerId], references: [id])
+
+    users      OrganizationUser[]
+    projects   Project[]
+    domains    Domain[]
+    categories Category[]
+    folders    Folder[]
+    files      OrganizationFile[]
 }
 
 model OrganizationUser {
@@ -87,14 +97,22 @@ model OrganizationUser {
     user           User         @relation(fields: [userId], references: [id])
     organization   Organization @relation(fields: [organizationId], references: [id])
 
-    createdPages    Page[]              @relation("PageCreatedBy")
-    updatedPages    Page[]              @relation("PageUpdatedBy")
-    createdWebsites Website[]           @relation("WebsiteCreatedBy")
-    updatedWebsites Website[]           @relation("WebsiteUpdatedBy")
-    createdSections PageSection[]       @relation("SectionCreatedBy")
-    updatedSections PageSection[]       @relation("SectionUpdatedBy")
-    createdWidgets  PageSectionWidget[] @relation("WidgetCreatedBy")
-    updatedWidgets  PageSectionWidget[] @relation("WidgetUpdatedBy")
+    createdPages      Page[]              @relation("PageCreatedBy")
+    updatedPages      Page[]              @relation("PageUpdatedBy")
+    createdWebsites   Website[]           @relation("WebsiteCreatedBy")
+    updatedWebsites   Website[]           @relation("WebsiteUpdatedBy")
+    createdSections   PageSection[]       @relation("SectionCreatedBy")
+    updatedSections   PageSection[]       @relation("SectionUpdatedBy")
+    createdWidgets    PageSectionWidget[] @relation("WidgetCreatedBy")
+    updatedWidgets    PageSectionWidget[] @relation("WidgetUpdatedBy")
+    createdEntries    CMSEntry[]          @relation("EntryCreatedBy")
+    updatedEntries    CMSEntry[]          @relation("EntryUpdatedBy")
+    createdFiles      OrganizationFile[]  @relation("FileCreatedBy")
+    updatedFiles      OrganizationFile[]  @relation("FileUpdatedBy")
+    createdFolders    Folder[]            @relation("FolderCreatedBy")
+    updatedFolders    Folder[]            @relation("FolderUpdatedBy")
+    createdCategories Category[]          @relation("CategoryCreatedBy")
+    updatedCategories Category[]          @relation("CategoryUpdatedBy")
 
     @@unique([userId, organizationId])
 }
@@ -111,6 +129,8 @@ model Project {
     websites     Website[]
     domains      Domain[]
     pageSections PageSection[]
+    files        OrganizationFile[]
+    folders      Folder[]
 }
 
 model Website {
@@ -133,11 +153,13 @@ model Website {
     updater   OrganizationUser @relation("WebsiteUpdatedBy", fields: [updatedBy], references: [id])
 
     domains Domain[]
+
+    @@unique([slug, projectId])
 }
 
 model Domain {
     id     String @id @default(uuid())
-    domain String
+    domain String @unique
 
     websiteId String
     website   Website @relation(fields: [websiteId], references: [id])
@@ -165,6 +187,28 @@ model Page {
     updater   OrganizationUser @relation("PageUpdatedBy", fields: [updatedBy], references: [id])
 
     sections PageSection[]
+
+    @@unique([slug, projectId])
+}
+
+model CMSEntry {
+    id        String    @id @default(uuid())
+    title     String
+    slug      String
+    order     Int
+    startDate DateTime?
+    endDate   DateTime?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy String
+    updatedBy String
+    creator   OrganizationUser @relation("EntryCreatedBy", fields: [createdBy], references: [id])
+    updater   OrganizationUser @relation("EntryUpdatedBy", fields: [updatedBy], references: [id])
+
+    sections PageSection[]
+    images   OrganizationFile[] @relation("EntryImages")
 }
 
 model PageSection {
@@ -176,8 +220,11 @@ model PageSection {
     order       Int
     layout      Layout
 
-    pageId String
-    page   Page   @relation(fields: [pageId], references: [id])
+    pageId String?
+    page   Page?   @relation(fields: [pageId], references: [id])
+
+    cmsEntryId String?
+    cmsEntry   CMSEntry? @relation(fields: [cmsEntryId], references: [id])
 
     projectId String
     project   Project @relation(fields: [projectId], references: [id])
@@ -194,14 +241,13 @@ model PageSection {
 }
 
 model PageSectionWidget {
-    id             String     @id @default(uuid())
-    type           WidgetType
-    order          Int
-    flow           Flow
-    limit          Int
-    orderBy        String
-    orderDirection String
-    height         Int
+    id         String     @id @default(uuid())
+    type       WidgetType
+    order      Int
+    flow       Flow
+    limit      Int
+    heading    String?
+    subheading String?
 
     sectionId String
     section   PageSection @relation(fields: [sectionId], references: [id])
@@ -214,6 +260,77 @@ model PageSectionWidget {
     updatedBy String
     creator   OrganizationUser @relation("WidgetCreatedBy", fields: [createdBy], references: [id])
     updater   OrganizationUser @relation("WidgetUpdatedBy", fields: [updatedBy], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model OrganizationFile {
+    id   String  @id @default(uuid())
+    name String
+    url  String
+    size Int?
+    type String?
+
+    folderId String?
+    folder   Folder? @relation(fields: [folderId], references: [id])
+
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id])
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    createdBy String
+    updatedBy String
+    creator   OrganizationUser @relation("FileCreatedBy", fields: [createdBy], references: [id])
+    updater   OrganizationUser @relation("FileUpdatedBy", fields: [updatedBy], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    cmsEntries CMSEntry[] @relation("EntryImages")
+}
+
+model Folder {
+    id   String @id @default(uuid())
+    name String
+
+    parentId String?
+    parent   Folder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+    children Folder[] @relation("FolderHierarchy")
+
+    projectId String
+    project   Project @relation(fields: [projectId], references: [id])
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    createdBy String
+    updatedBy String
+    creator   OrganizationUser @relation("FolderCreatedBy", fields: [createdBy], references: [id])
+    updater   OrganizationUser @relation("FolderUpdatedBy", fields: [updatedBy], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    files OrganizationFile[]
+}
+
+model Category {
+    id    String  @id @default(uuid())
+    name  String
+    slug  String
+    color String?
+    order Int
+
+    organizationId String
+    organization   Organization @relation(fields: [organizationId], references: [id])
+
+    createdBy String
+    updatedBy String
+    creator   OrganizationUser @relation("CategoryCreatedBy", fields: [createdBy], references: [id])
+    updater   OrganizationUser @relation("CategoryUpdatedBy", fields: [updatedBy], references: [id])
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
