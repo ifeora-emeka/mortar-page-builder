@@ -44,12 +44,11 @@ export async function seedProd(prisma: PrismaClient) {
         org = await prisma.organization.create({
             data: {
                 name: orgName,
-                ownerId: user.id // Set owner
+                ownerId: user.id
             }
         });
         console.log(`Created organization: ${orgName}`);
     } else if (!org.ownerId) {
-        // Fix missing owner if existing
         await prisma.organization.update({
             where: { id: org.id },
             data: { ownerId: user.id }

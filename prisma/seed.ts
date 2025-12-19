@@ -15,7 +15,6 @@ const prisma = new PrismaClient({ adapter });
 async function main() {
     const isProd = process.env.NODE_ENV === 'production';
 
-    // Always run prod seed to ensure basic admin user and org exist
     const { user, org, orgUser } = await seedProd(prisma);
 
     if (!isProd) {

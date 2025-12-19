@@ -4,7 +4,6 @@ import { faker } from '@faker-js/faker';
 export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser: any) {
     console.log("Seeding Dev Data with Faker...");
 
-    // Create a Project
     const projectName = 'Mortar Builder Demo';
     let project = await prisma.project.findFirst({
         where: {
@@ -23,7 +22,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
         console.log(`Created project: ${projectName}`);
     }
 
-    // Create a Website
     const websiteTitle = 'Demo Website';
     let website = await prisma.website.findUnique({
         where: {
@@ -48,7 +46,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
         console.log(`Created website: ${websiteTitle}`);
     }
 
-    // Create a Domain
     const domainName = 'demo.mortar.com';
     const existingDomain = await prisma.domain.findUnique({ where: { domain: domainName } });
     if (!existingDomain) {
@@ -63,7 +60,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
         console.log(`Created domain: ${domainName}`);
     }
 
-    // Create multiple pages with sections and widgets loop
     const pagesToCreate = 3;
 
     for (let i = 0; i < pagesToCreate; i++) {
@@ -92,7 +88,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
             console.log(`Created page: ${pageName}`);
         }
 
-        // Create Sections for each page
         const numSections = faker.number.int({ min: 3, max: 6 });
 
         for (let j = 0; j < numSections; j++) {
@@ -114,7 +109,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
                 }
             });
 
-            // Create widgets for each section
             const numWidgets = faker.number.int({ min: 1, max: 4 });
 
             for (let k = 0; k < numWidgets; k++) {
