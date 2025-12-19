@@ -49,15 +49,13 @@ type Website = {
 type PageSection = {
     id: string;
 
-    heading: string | null;
-    subheading: string | null;
+    name: string;
     description: string | null;
     slug: string;
 
     page: Page;
     order: number;
     project: Project;
-    layout: 'one-column' | 'two-column' | 'three-column';
 
     createBy: OrganizationUser;
     updatedBy: OrganizationUser;

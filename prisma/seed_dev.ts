@@ -1,4 +1,4 @@
-import { PrismaClient, Role, WidgetType, Layout, Flow } from '@prisma/client';
+import { PrismaClient, Role, WidgetType, Flow } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser: any) {
@@ -91,17 +91,15 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
         const numSections = faker.number.int({ min: 3, max: 6 });
 
         for (let j = 0; j < numSections; j++) {
-            const sectionHeading = faker.company.catchPhrase();
-            const sectionSlug = faker.helpers.slugify(sectionHeading).toLowerCase() + `-${j}`;
+            const sectionName = faker.company.catchPhrase();
+            const sectionSlug = faker.helpers.slugify(sectionName).toLowerCase() + `-${j}`;
 
             const section = await prisma.pageSection.create({
                 data: {
-                    heading: sectionHeading,
-                    subheading: faker.lorem.sentence(),
+                    name: sectionName,
                     description: faker.lorem.paragraph(),
                     slug: sectionSlug,
                     order: j,
-                    layout: faker.helpers.arrayElement([Layout.ONE_COLUMN, Layout.TWO_COLUMN, Layout.THREE_COLUMN]),
                     pageId: page.id,
                     projectId: project.id,
                     createdBy: orgUser.id,
@@ -118,8 +116,6 @@ export async function seedDev(prisma: PrismaClient, user: any, org: any, orgUser
                         order: k,
                         flow: faker.helpers.arrayElement([Flow.VERTICAL, Flow.HORIZONTAL]),
                         limit: 5,
-                        heading: faker.lorem.words(3),
-                        subheading: faker.lorem.words(5),
                         sectionId: section.id,
                         createdBy: orgUser.id,
                         updatedBy: orgUser.id

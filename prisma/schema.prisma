@@ -1,337 +1,319 @@
 generator client {
-    provider = "prisma-client-js"
-    // previewFeatures = ["driverAdapters"] // Not strictly needed for v7 but good practice if issues arise, though v7 handles it.
+  provider = "prisma-client-js"
+  // previewFeatures = ["driverAdapters"] // Not strictly needed for v7 but good practice if issues arise, though v7 handles it.
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 enum Role {
-    OWNER
-    MANAGER
-}
-
-enum Layout {
-    ONE_COLUMN
-    TWO_COLUMN
-    THREE_COLUMN
+  OWNER
+  MANAGER
 }
 
 enum Flow {
-    HORIZONTAL
-    VERTICAL
+  HORIZONTAL
+  VERTICAL
 }
 
 enum WidgetType {
-    TEXT
-    BUTTON
-    LINK
-    EVENT
-    PEOPLE
-    TESTIMONIAL
-    PRICING
-    BLOG
-    NEWS
-    RESOURCE
-    PRODUCT
-    SERVICE
-    FILE
-    HERO
-    RICH_TEXT
-    FORM
-    TABLE
-    FAQ
-    CONTACT
-    CTA
-    STACK
-    COMING_SOON
-    FOOTER
-    HEADER
-    EMBEDDING
+  TEXT
+  BUTTON
+  LINK
+  EVENT
+  PEOPLE
+  TESTIMONIAL
+  PRICING
+  BLOG
+  NEWS
+  PRODUCT
+  SERVICE
+  FILE
+  RICH_TEXT
+  FAQ
+  STACK
+  FOOTER
+  HEADER
+  EMBEDDING
 }
 
 model User {
-    id        String   @id @default(uuid())
-    email     String   @unique
-    name      String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    userSecret        UserSecret?
-    organizationUsers OrganizationUser[]
+  userSecret        UserSecret?
+  organizationUsers OrganizationUser[]
 
-    // Organizations owned by this user
-    ownedOrganizations Organization[] @relation("OrgOwner")
+  // Organizations owned by this user
+  ownedOrganizations Organization[] @relation("OrgOwner")
 }
 
 model UserSecret {
-    id       String @id @default(uuid())
-    password String
-    userId   String @unique
-    user     User   @relation(fields: [userId], references: [id])
+  id       String @id @default(uuid())
+  password String
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id])
 }
 
 model Organization {
-    id        String   @id @default(uuid())
-    name      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    ownerId String?
-    owner   User?   @relation("OrgOwner", fields: [ownerId], references: [id])
+  ownerId String?
+  owner   User?   @relation("OrgOwner", fields: [ownerId], references: [id])
 
-    users      OrganizationUser[]
-    projects   Project[]
-    domains    Domain[]
-    categories Category[]
-    folders    Folder[]
-    files      OrganizationFile[]
+  users      OrganizationUser[]
+  projects   Project[]
+  domains    Domain[]
+  categories Category[]
+  folders    Folder[]
+  files      OrganizationFile[]
 }
 
 model OrganizationUser {
-    id             String       @id @default(uuid())
-    userId         String
-    organizationId String
-    role           Role         @default(MANAGER)
-    user           User         @relation(fields: [userId], references: [id])
-    organization   Organization @relation(fields: [organizationId], references: [id])
+  id             String       @id @default(uuid())
+  userId         String
+  organizationId String
+  role           Role         @default(MANAGER)
+  user           User         @relation(fields: [userId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
-    createdPages      Page[]              @relation("PageCreatedBy")
-    updatedPages      Page[]              @relation("PageUpdatedBy")
-    createdWebsites   Website[]           @relation("WebsiteCreatedBy")
-    updatedWebsites   Website[]           @relation("WebsiteUpdatedBy")
-    createdSections   PageSection[]       @relation("SectionCreatedBy")
-    updatedSections   PageSection[]       @relation("SectionUpdatedBy")
-    createdWidgets    PageSectionWidget[] @relation("WidgetCreatedBy")
-    updatedWidgets    PageSectionWidget[] @relation("WidgetUpdatedBy")
-    createdEntries    CMSEntry[]          @relation("EntryCreatedBy")
-    updatedEntries    CMSEntry[]          @relation("EntryUpdatedBy")
-    createdFiles      OrganizationFile[]  @relation("FileCreatedBy")
-    updatedFiles      OrganizationFile[]  @relation("FileUpdatedBy")
-    createdFolders    Folder[]            @relation("FolderCreatedBy")
-    updatedFolders    Folder[]            @relation("FolderUpdatedBy")
-    createdCategories Category[]          @relation("CategoryCreatedBy")
-    updatedCategories Category[]          @relation("CategoryUpdatedBy")
+  createdPages      Page[]              @relation("PageCreatedBy")
+  updatedPages      Page[]              @relation("PageUpdatedBy")
+  createdWebsites   Website[]           @relation("WebsiteCreatedBy")
+  updatedWebsites   Website[]           @relation("WebsiteUpdatedBy")
+  createdSections   PageSection[]       @relation("SectionCreatedBy")
+  updatedSections   PageSection[]       @relation("SectionUpdatedBy")
+  createdWidgets    PageSectionWidget[] @relation("WidgetCreatedBy")
+  updatedWidgets    PageSectionWidget[] @relation("WidgetUpdatedBy")
+  createdEntries    CMSEntry[]          @relation("EntryCreatedBy")
+  updatedEntries    CMSEntry[]          @relation("EntryUpdatedBy")
+  createdFiles      OrganizationFile[]  @relation("FileCreatedBy")
+  updatedFiles      OrganizationFile[]  @relation("FileUpdatedBy")
+  createdFolders    Folder[]            @relation("FolderCreatedBy")
+  updatedFolders    Folder[]            @relation("FolderUpdatedBy")
+  createdCategories Category[]          @relation("CategoryCreatedBy")
+  updatedCategories Category[]          @relation("CategoryUpdatedBy")
 
-    @@unique([userId, organizationId])
+  @@unique([userId, organizationId])
 }
 
 model Project {
-    id             String       @id @default(uuid())
-    name           String
-    organizationId String
-    organization   Organization @relation(fields: [organizationId], references: [id])
-    createdAt      DateTime     @default(now())
-    updatedAt      DateTime     @updatedAt
+  id             String       @id @default(uuid())
+  name           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
 
-    pages        Page[]
-    websites     Website[]
-    domains      Domain[]
-    pageSections PageSection[]
-    files        OrganizationFile[]
-    folders      Folder[]
+  pages        Page[]
+  websites     Website[]
+  domains      Domain[]
+  pageSections PageSection[]
+  files        OrganizationFile[]
+  folders      Folder[]
 }
 
 model Website {
-    id          String   @id @default(uuid())
-    title       String
-    description String
-    slug        String
-    faviconURL  String?
-    logoURL     String?
-    keywords    String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  slug        String
+  faviconURL  String?
+  logoURL     String?
+  keywords    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("WebsiteCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("WebsiteUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("WebsiteCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("WebsiteUpdatedBy", fields: [updatedBy], references: [id])
 
-    domains Domain[]
+  domains Domain[]
 
-    @@unique([slug, projectId])
+  @@unique([slug, projectId])
 }
 
 model Domain {
-    id     String @id @default(uuid())
-    domain String @unique
+  id     String @id @default(uuid())
+  domain String @unique
 
-    websiteId String
-    website   Website @relation(fields: [websiteId], references: [id])
+  websiteId String
+  website   Website @relation(fields: [websiteId], references: [id])
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    organizationId String
-    organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 }
 
 model Page {
-    id        String   @id @default(uuid())
-    name      String
-    slug      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  slug      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("PageCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("PageUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("PageCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("PageUpdatedBy", fields: [updatedBy], references: [id])
 
-    sections PageSection[]
+  sections PageSection[]
 
-    @@unique([slug, projectId])
+  @@unique([slug, projectId])
 }
 
 model CMSEntry {
-    id        String    @id @default(uuid())
-    title     String
-    slug      String
-    order     Int
-    startDate DateTime?
-    endDate   DateTime?
+  id        String    @id @default(uuid())
+  title     String
+  slug      String
+  order     Int
+  startDate DateTime?
+  endDate   DateTime?
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("EntryCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("EntryUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("EntryCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("EntryUpdatedBy", fields: [updatedBy], references: [id])
 
-    sections PageSection[]
-    images   OrganizationFile[] @relation("EntryImages")
+  sections PageSection[]
+  images   OrganizationFile[] @relation("EntryImages")
 }
 
 model PageSection {
-    id          String  @id @default(uuid())
-    heading     String?
-    subheading  String?
-    description String?
-    slug        String
-    order       Int
-    layout      Layout
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  slug        String
+  order       Int
 
-    pageId String?
-    page   Page?   @relation(fields: [pageId], references: [id])
+  pageId String?
+  page   Page?   @relation(fields: [pageId], references: [id])
 
-    cmsEntryId String?
-    cmsEntry   CMSEntry? @relation(fields: [cmsEntryId], references: [id])
+  cmsEntryId String?
+  cmsEntry   CMSEntry? @relation(fields: [cmsEntryId], references: [id])
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("SectionCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("SectionUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("SectionCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("SectionUpdatedBy", fields: [updatedBy], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    widgets PageSectionWidget[]
+  widgets PageSectionWidget[]
 }
 
 model PageSectionWidget {
-    id         String     @id @default(uuid())
-    type       WidgetType
-    order      Int
-    flow       Flow
-    limit      Int
-    heading    String?
-    subheading String?
+  id    String     @id @default(uuid())
+  type  WidgetType
+  order Int
+  flow  Flow
+  limit Int
 
-    sectionId String
-    section   PageSection @relation(fields: [sectionId], references: [id])
+  sectionId String
+  section   PageSection @relation(fields: [sectionId], references: [id])
 
-    parentId String?
-    parent   PageSectionWidget?  @relation("WidgetHierarchy", fields: [parentId], references: [id])
-    children PageSectionWidget[] @relation("WidgetHierarchy")
+  parentId String?
+  parent   PageSectionWidget?  @relation("WidgetHierarchy", fields: [parentId], references: [id])
+  children PageSectionWidget[] @relation("WidgetHierarchy")
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("WidgetCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("WidgetUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("WidgetCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("WidgetUpdatedBy", fields: [updatedBy], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model OrganizationFile {
-    id   String  @id @default(uuid())
-    name String
-    url  String
-    size Int?
-    type String?
+  id   String  @id @default(uuid())
+  name String
+  size Int?
+  type String?
 
-    folderId String?
-    folder   Folder? @relation(fields: [folderId], references: [id])
+  folderId String?
+  folder   Folder? @relation(fields: [folderId], references: [id])
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    organizationId String
-    organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("FileCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("FileUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("FileCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("FileUpdatedBy", fields: [updatedBy], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    cmsEntries CMSEntry[] @relation("EntryImages")
+  cmsEntries CMSEntry[] @relation("EntryImages")
 }
 
 model Folder {
-    id   String @id @default(uuid())
-    name String
+  id   String @id @default(uuid())
+  name String
 
-    parentId String?
-    parent   Folder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
-    children Folder[] @relation("FolderHierarchy")
+  parentId String?
+  parent   Folder?  @relation("FolderHierarchy", fields: [parentId], references: [id])
+  children Folder[] @relation("FolderHierarchy")
 
-    projectId String
-    project   Project @relation(fields: [projectId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
 
-    organizationId String
-    organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("FolderCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("FolderUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("FolderCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("FolderUpdatedBy", fields: [updatedBy], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-    files OrganizationFile[]
+  files OrganizationFile[]
 }
 
 model Category {
-    id    String  @id @default(uuid())
-    name  String
-    slug  String
-    color String?
-    order Int
+  id    String  @id @default(uuid())
+  name  String
+  slug  String
+  color String?
+  order Int
 
-    organizationId String
-    organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
 
-    createdBy String
-    updatedBy String
-    creator   OrganizationUser @relation("CategoryCreatedBy", fields: [createdBy], references: [id])
-    updater   OrganizationUser @relation("CategoryUpdatedBy", fields: [updatedBy], references: [id])
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("CategoryCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("CategoryUpdatedBy", fields: [updatedBy], references: [id])
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
