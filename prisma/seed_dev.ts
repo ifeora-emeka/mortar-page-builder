@@ -93,7 +93,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     const heroTextWidget = await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 0,
             limit: 1,
@@ -168,7 +168,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 0,
             textContent: 'Real-time Collaboration',
@@ -182,7 +182,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 1,
             textContent: 'Advanced Analytics',
@@ -196,7 +196,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 2,
             textContent: 'Seamless Integrations',
@@ -284,11 +284,25 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.TESTIMONIAL,
-            flow: Flow.HORIZONTAL,
+            type: WidgetType.TEXT,
+            flow: Flow.VERTICAL,
             order: 0,
-            limit: 4,
             textContent: 'Our clients love working with us. Here\'s what they have to say about their experience.',
+            displayConfig: { element: 'h2' },
+            sectionId: testimonialsSection.id,
+            createdBy: orgUser.id,
+            updatedBy: orgUser.id
+        }
+    });
+
+    const testimonialVideoWidget = await prisma.pageSectionWidget.create({
+        data: {
+            type: WidgetType.VIDEO,
+            flow: Flow.HORIZONTAL,
+            order: 1,
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            thumbnailUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg',
+            textContent: 'Client Testimonial Video',
             sectionId: testimonialsSection.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -308,7 +322,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 0,
             limit: 1,
@@ -333,7 +347,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
 
     await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.RICH_TEXT,
+            type: WidgetType.TEXT,
             flow: Flow.VERTICAL,
             order: 0,
             limit: 1,
@@ -356,13 +370,27 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
         }
     });
 
-    await prisma.pageSectionWidget.create({
+    const teamImageWidget = await prisma.pageSectionWidget.create({
         data: {
-            type: WidgetType.PEOPLE,
+            type: WidgetType.IMAGE,
             flow: Flow.HORIZONTAL,
             order: 0,
-            limit: 8,
+            src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop',
+            thumbnailUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=400&h=300&fit=crop',
+            textContent: 'Team Photo',
+            sectionId: teamSection.id,
+            createdBy: orgUser.id,
+            updatedBy: orgUser.id
+        }
+    });
+
+    await prisma.pageSectionWidget.create({
+        data: {
+            type: WidgetType.TEXT,
+            flow: Flow.VERTICAL,
+            order: 1,
             textContent: 'Meet the talented individuals who make our company great. Our diverse team brings together expertise from various fields to deliver outstanding results.',
+            displayConfig: { element: 'p' },
             sectionId: teamSection.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -535,6 +563,44 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             updatedBy: orgUser.id
         }
     });
+
+    const colorVariables = [
+        { name: 'Primary', slug: 'primary', strength: 500, value: '#3b82f6' },
+        { name: 'Primary', slug: 'primary', strength: 600, value: '#2563eb' },
+        { name: 'Primary', slug: 'primary', strength: 700, value: '#1d4ed8' },
+        { name: 'Secondary', slug: 'secondary', strength: 500, value: '#8b5cf6' },
+        { name: 'Secondary', slug: 'secondary', strength: 600, value: '#7c3aed' },
+        { name: 'Secondary', slug: 'secondary', strength: 700, value: '#6d28d9' },
+        { name: 'Accent', slug: 'accent', strength: 500, value: '#10b981' },
+        { name: 'Accent', slug: 'accent', strength: 600, value: '#059669' },
+        { name: 'Accent', slug: 'accent', strength: 700, value: '#047857' },
+        { name: 'Typography', slug: 'typography', strength: 900, value: '#111827' },
+        { name: 'Typography', slug: 'typography', strength: 700, value: '#374151' },
+        { name: 'Typography', slug: 'typography', strength: 500, value: '#6b7280' },
+    ];
+
+    for (const colorVar of colorVariables) {
+        await prisma.colorVariable.upsert({
+            where: {
+                websiteId_slug_strength: {
+                    websiteId: website.id,
+                    slug: colorVar.slug,
+                    strength: colorVar.strength
+                }
+            },
+            update: {
+                value: colorVar.value
+            },
+            create: {
+                name: colorVar.name,
+                slug: colorVar.slug,
+                strength: colorVar.strength,
+                value: colorVar.value,
+                websiteId: website.id,
+                projectId: project.id
+            }
+        });
+    }
 
     console.log("Seed completed successfully!");
 }

@@ -14,24 +14,50 @@ type Props = {
   };
   widgets: WidgetWithChildren[];
   editMode?: boolean;
+  isActive?: boolean;
+  onSectionClick?: (sectionId: string) => void;
+  activeWidgetId?: string | null;
+  onWidgetClick?: (widgetId: string) => void;
 }
 
-export default function SectionRenderer({ section, widgets, editMode = false }: Props) {
+export default function SectionRenderer({ 
+  section, 
+  widgets, 
+  editMode = false,
+  isActive = false,
+  onSectionClick,
+  activeWidgetId = null,
+  onWidgetClick
+}: Props) {
   const sectionWidgets = widgets
     .filter(w => w.sectionId === section.id && !w.parentId)
     .sort((a, b) => a.order - b.order);
 
   const baseClasses = editMode
-    ? 'relative group outline-none transition-all hover:outline-2 hover:outline-blue-500 hover:outline-dashed min-h-[60px]'
-    : '';
+    ? `relative group outline-none transition-all min-h-[60px] rounded-lg p-4 ${
+        isActive 
+          ? 'outline-2 outline-blue-500 outline-dashed bg-blue-50/50 dark:bg-blue-950/20' 
+          : 'hover:outline-2 hover:outline-blue-500 hover:outline-dashed hover:bg-blue-50/30 dark:hover:bg-blue-950/10'
+      }`
+    : 'mb-12';
+
+  const handleClick = () => {
+    if (editMode && onSectionClick) {
+      onSectionClick(section.id);
+    }
+  };
 
   return (
     <section
-      className={`mb-12 ${baseClasses}`}
+      className={baseClasses}
       data-section-id={section.id}
+      onClick={handleClick}
+      style={{ cursor: editMode ? 'pointer' : 'default' }}
     >
       {editMode && (
-        <div className="absolute top-0 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-br opacity-0 group-hover:opacity-100 transition-opacity z-10">
+        <div className={`absolute top-0 left-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-br transition-opacity z-10 ${
+          isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+        }`}>
           {section.name}
         </div>
       )}
@@ -42,6 +68,9 @@ export default function SectionRenderer({ section, widgets, editMode = false }: 
             widget={widget}
             allWidgets={widgets}
             editMode={editMode}
+            isActive={activeWidgetId === widget.id}
+            onWidgetClick={onWidgetClick}
+            activeWidgetId={activeWidgetId}
           />
         ))}
       </div>

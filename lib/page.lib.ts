@@ -210,13 +210,24 @@ export async function getPageDataByRoute(route: string) {
   const sections = page.sectionInstances.map(instance => instance.section);
   const widgets = sections.flatMap(section => section.widgets);
 
+  const colorVariables = await prisma.colorVariable.findMany({
+    where: {
+      websiteId: website.id
+    },
+    orderBy: [
+      { slug: 'asc' },
+      { strength: 'asc' }
+    ]
+  });
+
   return {
     page,
     sections,
     sectionInstances: page.sectionInstances,
     widgets,
     website,
-    organization: project.organization
+    organization: project.organization,
+    colorVariables
   };
 }
 

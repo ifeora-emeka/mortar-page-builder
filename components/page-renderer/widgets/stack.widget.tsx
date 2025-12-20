@@ -5,7 +5,7 @@ import { Flow } from '@prisma/client';
 import { WidgetProps } from './widget.types';
 import WidgetRenderer from './widget-renderer';
 
-export default function StackWidget({ widget, allWidgets, editMode = false }: WidgetProps) {
+export default function StackWidget({ widget, allWidgets, editMode = false, isActive = false, onWidgetClick, activeWidgetId }: WidgetProps & { onWidgetClick?: (widgetId: string) => void; activeWidgetId?: string | null }) {
   const isHorizontal = widget.flow === Flow.HORIZONTAL;
   const children = widget.children || [];
 
@@ -20,6 +20,8 @@ export default function StackWidget({ widget, allWidgets, editMode = false }: Wi
             widget={child}
             allWidgets={allWidgets}
             editMode={editMode}
+            isActive={activeWidgetId === child.id}
+            onWidgetClick={onWidgetClick}
           />
         ))
       ) : (

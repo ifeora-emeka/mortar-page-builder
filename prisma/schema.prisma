@@ -34,6 +34,8 @@ enum WidgetType {
   FAQ
   STACK
   EMBEDDING
+  IMAGE
+  VIDEO
 }
 
 model User {
@@ -120,6 +122,7 @@ model Project {
   sectionInstances PageSectionInstance[]
   files            OrganizationFile[]
   folders          Folder[]
+  colorVariables   ColorVariable[]
 }
 
 model Website {
@@ -141,7 +144,8 @@ model Website {
   creator   OrganizationUser @relation("WebsiteCreatedBy", fields: [createdBy], references: [id])
   updater   OrganizationUser @relation("WebsiteUpdatedBy", fields: [updatedBy], references: [id])
 
-  domains Domain[]
+  domains        Domain[]
+  colorVariables ColorVariable[]
 }
 
 model Domain {
@@ -247,13 +251,15 @@ model PageSectionInstance {
 }
 
 model PageSectionWidget {
-  id          String     @id @default(uuid())
-  type        WidgetType
-  order       Int
-  flow        Flow
-  limit       Int?
-  textContent String?
+  id            String     @id @default(uuid())
+  type          WidgetType
+  order         Int
+  flow          Flow
+  limit         Int?
+  textContent   String?
   displayConfig Json?
+  src           String?
+  thumbnailUrl  String?
 
   sectionId String
   section   PageSection @relation(fields: [sectionId], references: [id])
@@ -339,4 +345,23 @@ model Category {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ColorVariable {
+  id       String @id @default(uuid())
+  name     String
+  slug     String
+  strength Int
+  value    String
+
+  websiteId String
+  website   Website @relation(fields: [websiteId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([websiteId, slug, strength])
 }

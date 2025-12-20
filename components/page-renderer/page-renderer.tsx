@@ -18,19 +18,42 @@ type Props = {
   })[];
   widgets: WidgetWithChildren[];
   editMode?: boolean;
+  activeSectionId?: string | null;
+  activeWidgetId?: string | null;
+  onSectionClick?: (sectionId: string) => void;
+  onWidgetClick?: (widgetId: string) => void;
 }
 
-export default function PageRenderer({ page, sections, sectionInstances, widgets, editMode = false }: Props) {
+export default function PageRenderer({ 
+  page, 
+  sections, 
+  sectionInstances, 
+  widgets, 
+  editMode = false,
+  activeSectionId = null,
+  activeWidgetId = null,
+  onSectionClick,
+  onWidgetClick
+}: Props) {
   if (!page) {
-    return <div>Page not found</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold mb-2">Page not found</h2>
+          <p className="text-muted-foreground">The requested page could not be loaded</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen">
+    <div className={`min-h-screen`}>
       {!editMode && (
-        <h1 className="text-4xl font-bold mb-8">{page.name}</h1>
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="text-4xl font-bold mb-8">{page.name}</h1>
+        </div>
       )}
-      <div className="space-y-8">
+      <div className={editMode ? 'space-y-6' : 'container mx-auto px-4 space-y-8'}>
         {sectionInstances
           ? sectionInstances
               .sort((a, b) => a.order - b.order)
@@ -40,6 +63,10 @@ export default function PageRenderer({ page, sections, sectionInstances, widgets
                   section={instance.section}
                   widgets={widgets}
                   editMode={editMode}
+                  isActive={activeSectionId === instance.section.id}
+                  onSectionClick={onSectionClick}
+                  activeWidgetId={activeWidgetId}
+                  onWidgetClick={onWidgetClick}
                 />
               ))
           : sections.map((section) => (
@@ -48,6 +75,10 @@ export default function PageRenderer({ page, sections, sectionInstances, widgets
                 section={section}
                 widgets={widgets}
                 editMode={editMode}
+                isActive={activeSectionId === section.id}
+                onSectionClick={onSectionClick}
+                activeWidgetId={activeWidgetId}
+                onWidgetClick={onWidgetClick}
               />
             ))}
       </div>

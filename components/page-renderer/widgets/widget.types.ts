@@ -6,4 +6,5 @@ export type WidgetProps = {
     };
     allWidgets: (PageSectionWidget & { children?: PageSectionWidget[] })[];
     editMode?: boolean;
+    isActive?: boolean;
 }
