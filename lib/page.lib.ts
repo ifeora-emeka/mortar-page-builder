@@ -15,6 +15,10 @@ export async function getPageDataByRoute(route: string) {
 
   console.log('[DEBUG] getPageDataByRoute:', { subdomain, domain, host, route });
 
+  if (route.startsWith('/.well-known/') || route.startsWith('/favicon.ico') || route.startsWith('/_next/')) {
+    throw new Error('System route');
+  }
+
   let website = null;
 
   if (subdomain && subdomain !== 'www') {

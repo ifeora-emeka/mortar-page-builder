@@ -74,6 +74,7 @@ export default async function DynamicPage({
         sections={pageData.sections || []}
         sectionInstances={pageData.sectionInstances}
         widgets={pageData.widgets || []}
+        editMode={false}
       />
     );
   } catch (error) {

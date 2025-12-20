@@ -14,6 +14,10 @@ export async function GET(req: Request) {
         const { searchParams } = new URL(req.url);
         const route = searchParams.get('route') || '/';
 
+        if (route.startsWith('/.well-known/') || route.startsWith('/favicon.ico') || route.startsWith('/_next/')) {
+            return NextResponse.json({ error: 'System route' }, { status: 404 });
+        }
+
         const { subdomain, domain } = await getDomainInfo();
 
         let website = null;

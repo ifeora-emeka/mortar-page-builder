@@ -253,6 +253,7 @@ model PageSectionWidget {
   flow        Flow
   limit       Int?
   textContent String?
+  displayConfig Json?
 
   sectionId String
   section   PageSection @relation(fields: [sectionId], references: [id])

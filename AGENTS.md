@@ -56,6 +56,7 @@ We allow users create a custom domain on the
 ## Frontend routes (with subdomin or custom domain)
 ``/``: will show the home page of the final website built
 ``/ms-admin``: will show the admin page for that project (based on the subdomain) or the login page if the user isn't logged in.
+``/ms-admin/page-builder``: Should render the page builder with the page renderer in it. 
 ``/content/:type``: This shows the list of that content with pagination.
 ``/content/:type/:slug``: This shows the details page for that contnet.
 

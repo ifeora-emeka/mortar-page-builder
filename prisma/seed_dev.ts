@@ -98,6 +98,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             order: 0,
             limit: 1,
             textContent: 'Welcome to our platform. We build amazing digital experiences that help businesses grow and succeed in the modern world.',
+            displayConfig: { element: 'h1' },
             sectionId: heroSection.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -171,6 +172,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             flow: Flow.VERTICAL,
             order: 0,
             textContent: 'Real-time Collaboration',
+            displayConfig: { element: 'h3' },
             sectionId: featuresSection.id,
             parentId: featuresStack.id,
             createdBy: orgUser.id,
@@ -184,6 +186,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             flow: Flow.VERTICAL,
             order: 1,
             textContent: 'Advanced Analytics',
+            displayConfig: { element: 'h3' },
             sectionId: featuresSection.id,
             parentId: featuresStack.id,
             createdBy: orgUser.id,
@@ -197,6 +200,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             flow: Flow.VERTICAL,
             order: 2,
             textContent: 'Seamless Integrations',
+            displayConfig: { element: 'h3' },
             sectionId: featuresSection.id,
             parentId: featuresStack.id,
             createdBy: orgUser.id,
@@ -309,6 +313,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             order: 0,
             limit: 1,
             textContent: 'We are a team of passionate professionals dedicated to creating innovative solutions that make a difference. Founded in 2020, we have been helping businesses transform their digital presence and achieve their goals.',
+            displayConfig: { element: 'p' },
             sectionId: aboutUsSection.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -333,6 +338,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             order: 0,
             limit: 1,
             textContent: 'Our mission is to empower businesses with cutting-edge technology and exceptional service. We believe in transparency, innovation, and building lasting relationships with our clients.',
+            displayConfig: { element: 'p' },
             sectionId: missionSection.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
