@@ -1,6 +1,6 @@
 # Agent instruction
 - Don't add code comments.
-- Read the Conceptual Overview
+- Read the Conceptual Overview & Website page architecture.
 - Break components down into smaller components in it's own dir.
 - Check the Prisma schema to understand the project.
 - Components should always be powered by props and not have any context in them for easy unit testing.
@@ -58,3 +58,7 @@ We allow users create a custom domain on the
 ``/ms-admin``: will show the admin page for that project (based on the subdomain) or the login page if the user isn't logged in.
 ``/content/:type``: This shows the list of that content with pagination.
 ``/content/:type/:slug``: This shows the details page for that contnet.
+
+# Website page architecture
+A website has pages, a page has sections and sections have widgets. Widgets can be stack (vertical or horizontal), headers (h1 - h6), embbings (like iframe), forms, image, video and much more.
+A widget can also have multiple widget children.

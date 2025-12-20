@@ -33,8 +33,6 @@ enum WidgetType {
   RICH_TEXT
   FAQ
   STACK
-  FOOTER
-  HEADER
   EMBEDDING
 }
 
@@ -84,22 +82,24 @@ model OrganizationUser {
   user           User         @relation(fields: [userId], references: [id])
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  createdPages      Page[]              @relation("PageCreatedBy")
-  updatedPages      Page[]              @relation("PageUpdatedBy")
-  createdWebsites   Website[]           @relation("WebsiteCreatedBy")
-  updatedWebsites   Website[]           @relation("WebsiteUpdatedBy")
-  createdSections   PageSection[]       @relation("SectionCreatedBy")
-  updatedSections   PageSection[]       @relation("SectionUpdatedBy")
-  createdWidgets    PageSectionWidget[] @relation("WidgetCreatedBy")
-  updatedWidgets    PageSectionWidget[] @relation("WidgetUpdatedBy")
-  createdEntries    CMSEntry[]          @relation("EntryCreatedBy")
-  updatedEntries    CMSEntry[]          @relation("EntryUpdatedBy")
-  createdFiles      OrganizationFile[]  @relation("FileCreatedBy")
-  updatedFiles      OrganizationFile[]  @relation("FileUpdatedBy")
-  createdFolders    Folder[]            @relation("FolderCreatedBy")
-  updatedFolders    Folder[]            @relation("FolderUpdatedBy")
-  createdCategories Category[]          @relation("CategoryCreatedBy")
-  updatedCategories Category[]          @relation("CategoryUpdatedBy")
+  createdPages            Page[]                @relation("PageCreatedBy")
+  updatedPages            Page[]                @relation("PageUpdatedBy")
+  createdWebsites         Website[]             @relation("WebsiteCreatedBy")
+  updatedWebsites         Website[]             @relation("WebsiteUpdatedBy")
+  createdSections         PageSection[]         @relation("SectionCreatedBy")
+  updatedSections         PageSection[]         @relation("SectionUpdatedBy")
+  createdSectionInstances PageSectionInstance[] @relation("SectionInstanceCreatedBy")
+  updatedSectionInstances PageSectionInstance[] @relation("SectionInstanceUpdatedBy")
+  createdWidgets          PageSectionWidget[]   @relation("WidgetCreatedBy")
+  updatedWidgets          PageSectionWidget[]   @relation("WidgetUpdatedBy")
+  createdEntries          CMSEntry[]            @relation("EntryCreatedBy")
+  updatedEntries          CMSEntry[]            @relation("EntryUpdatedBy")
+  createdFiles            OrganizationFile[]    @relation("FileCreatedBy")
+  updatedFiles            OrganizationFile[]    @relation("FileUpdatedBy")
+  createdFolders          Folder[]              @relation("FolderCreatedBy")
+  updatedFolders          Folder[]              @relation("FolderUpdatedBy")
+  createdCategories       Category[]            @relation("CategoryCreatedBy")
+  updatedCategories       Category[]            @relation("CategoryUpdatedBy")
 
   @@unique([userId, organizationId])
 }
@@ -107,24 +107,26 @@ model OrganizationUser {
 model Project {
   id             String       @id @default(uuid())
   name           String
+  thumbnailURL   String?
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id])
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  pages        Page[]
-  websites     Website[]
-  domains      Domain[]
-  pageSections PageSection[]
-  files        OrganizationFile[]
-  folders      Folder[]
+  pages            Page[]
+  websites         Website[]
+  domains          Domain[]
+  pageSections     PageSection[]
+  sectionInstances PageSectionInstance[]
+  files            OrganizationFile[]
+  folders          Folder[]
 }
 
 model Website {
   id          String   @id @default(uuid())
   title       String
   description String
-  slug        String
+  subdomain   String   @unique
   faviconURL  String?
   logoURL     String?
   keywords    String?
@@ -140,8 +142,6 @@ model Website {
   updater   OrganizationUser @relation("WebsiteUpdatedBy", fields: [updatedBy], references: [id])
 
   domains Domain[]
-
-  @@unique([slug, projectId])
 }
 
 model Domain {
@@ -173,7 +173,7 @@ model Page {
   creator   OrganizationUser @relation("PageCreatedBy", fields: [createdBy], references: [id])
   updater   OrganizationUser @relation("PageUpdatedBy", fields: [updatedBy], references: [id])
 
-  sections PageSection[]
+  sectionInstances PageSectionInstance[]
 
   @@unique([slug, projectId])
 }
@@ -203,10 +203,6 @@ model PageSection {
   name        String
   description String?
   slug        String
-  order       Int
-
-  pageId String?
-  page   Page?   @relation(fields: [pageId], references: [id])
 
   cmsEntryId String?
   cmsEntry   CMSEntry? @relation(fields: [cmsEntryId], references: [id])
@@ -222,15 +218,41 @@ model PageSection {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  widgets PageSectionWidget[]
+  widgets   PageSectionWidget[]
+  instances PageSectionInstance[]
+}
+
+model PageSectionInstance {
+  id    String @id @default(uuid())
+  order Int
+
+  pageId String
+  page   Page   @relation(fields: [pageId], references: [id])
+
+  sectionId String
+  section   PageSection @relation(fields: [sectionId], references: [id])
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  createdBy String
+  updatedBy String
+  creator   OrganizationUser @relation("SectionInstanceCreatedBy", fields: [createdBy], references: [id])
+  updater   OrganizationUser @relation("SectionInstanceUpdatedBy", fields: [updatedBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([pageId, sectionId])
 }
 
 model PageSectionWidget {
-  id    String     @id @default(uuid())
-  type  WidgetType
-  order Int
-  flow  Flow
-  limit Int
+  id          String     @id @default(uuid())
+  type        WidgetType
+  order       Int
+  flow        Flow
+  limit       Int?
+  textContent String?
 
   sectionId String
   section   PageSection @relation(fields: [sectionId], references: [id])

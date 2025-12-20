@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
@@ -40,6 +41,13 @@ export default function Login() {
       password: '',
     },
   });
+
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'production') {
+      form.setValue('email', 'ideginmedia@gmail.com');
+      form.setValue('password', 'Superman6625*');
+    }
+  }, [form]);
 
   const mutation = useMutation({
     mutationFn: loginUser,

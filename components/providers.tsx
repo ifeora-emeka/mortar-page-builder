@@ -1,9 +1,9 @@
 'use client';
 
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClient } from '@/lib/query-client';
-import { AuthProvider, AuthState } from '@/app/context/auth.context';
+import { AuthProvider, AuthState } from '@/context/auth.context';
 
 export function Providers({ children, initialAuthData }: { children: React.ReactNode, initialAuthData: AuthState }) {
   return (
@@ -11,7 +11,7 @@ export function Providers({ children, initialAuthData }: { children: React.React
       <AuthProvider initialData={initialAuthData}>
         {children}
       </AuthProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
   );
 }
