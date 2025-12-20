@@ -1,4 +1,4 @@
-import { PrismaClient, WidgetType, Flow, User, Organization, OrganizationUser } from '@prisma/client';
+import { PrismaClient, WidgetType, Flow, ContainerWidth, User, Organization, OrganizationUser } from '@prisma/client';
 
 export async function seedDev(prisma: PrismaClient, user: User, org: Organization, orgUser: OrganizationUser) {
     console.log("Seeding Dev Data...");
@@ -85,6 +85,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Hero Section',
             description: 'Welcome visitors with an impactful hero section that showcases your brand and value proposition.',
             slug: 'hero-section',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -147,6 +148,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Features',
             description: 'Highlight your key features and benefits to help visitors understand what makes you unique.',
             slug: 'features',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -213,6 +215,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Services',
             description: 'Showcase the services you offer to potential customers.',
             slug: 'services',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -276,6 +279,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Testimonials',
             description: 'Build trust with social proof from satisfied customers.',
             slug: 'testimonials',
+            containerWidth: ContainerWidth.LARGE,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -314,6 +318,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'About Us',
             description: 'Tell your story and share what drives your organization.',
             slug: 'about-us',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -339,6 +344,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Our Mission',
             description: 'Communicate your mission and the values that guide your work.',
             slug: 'our-mission',
+            containerWidth: ContainerWidth.SMALL,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -364,6 +370,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Our Team',
             description: 'Introduce the people behind your organization.',
             slug: 'our-team',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id
@@ -402,6 +409,7 @@ export async function seedDev(prisma: PrismaClient, user: User, org: Organizatio
             name: 'Frequently Asked Questions',
             description: 'Answer common questions visitors might have about your organization.',
             slug: 'faq',
+            containerWidth: ContainerWidth.DEFAULT,
             projectId: project.id,
             createdBy: orgUser.id,
             updatedBy: orgUser.id

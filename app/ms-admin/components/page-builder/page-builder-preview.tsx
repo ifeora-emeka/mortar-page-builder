@@ -31,13 +31,16 @@ export default function PageBuilderPreview({ }: Props) {
             if (selectedWidget?.id === widgetId) {
                 setSelectedWidget(null);
                 setActiveWidgetId(null);
+                setActiveSectionId(null);
             } else {
                 setSelectedWidget(clickedWidget);
                 setActiveWidgetId(widgetId);
+                setActiveSectionId(clickedWidget.sectionId);
             }
         } else {
             setSelectedWidget(null);
             setActiveWidgetId(null);
+            setActiveSectionId(null);
         }
     };
 

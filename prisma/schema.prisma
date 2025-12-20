@@ -17,6 +17,13 @@ enum Flow {
   VERTICAL
 }
 
+enum ContainerWidth {
+  SMALL
+  DEFAULT
+  LARGE
+  NONE
+}
+
 enum WidgetType {
   TEXT
   BUTTON
@@ -203,10 +210,11 @@ model CMSEntry {
 }
 
 model PageSection {
-  id          String  @id @default(uuid())
-  name        String
-  description String?
-  slug        String
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  slug          String
+  containerWidth ContainerWidth @default(DEFAULT)
 
   cmsEntryId String?
   cmsEntry   CMSEntry? @relation(fields: [cmsEntryId], references: [id])
@@ -260,6 +268,7 @@ model PageSectionWidget {
   displayConfig Json?
   src           String?
   thumbnailUrl  String?
+  backgroundConfig Json?
 
   sectionId String
   section   PageSection @relation(fields: [sectionId], references: [id])

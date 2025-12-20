@@ -33,13 +33,21 @@ export default function SectionRenderer({
     .filter(w => w.sectionId === section.id && !w.parentId)
     .sort((a, b) => a.order - b.order);
 
+  const containerWidthClass = section.containerWidth === 'NONE' 
+    ? 'w-full' 
+    : section.containerWidth === 'SMALL' 
+    ? 'container mx-auto max-w-2xl' 
+    : section.containerWidth === 'LARGE' 
+    ? 'container mx-auto max-w-7xl' 
+    : 'container mx-auto max-w-5xl';
+
   const baseClasses = editMode
-    ? `relative group outline-none transition-all min-h-[60px] rounded-lg p-4 ${
+    ? `relative group outline-none transition-all min-h-[60px] rounded-lg p-4 ${containerWidthClass} ${
         isActive 
           ? 'outline-2 outline-blue-500 outline-dashed bg-blue-50/50 dark:bg-blue-950/20' 
           : 'hover:outline-2 hover:outline-blue-500 hover:outline-dashed hover:bg-blue-50/30 dark:hover:bg-blue-950/10'
       }`
-    : 'mb-12';
+    : `mb-12 ${containerWidthClass}`;
 
   const handleClick = () => {
     if (editMode && onSectionClick) {
